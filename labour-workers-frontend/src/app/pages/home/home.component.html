@@ -1,0 +1,49 @@
+<div class="home-page">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Welcome to LabourWorkers</h1>
+      <p>Your gateway to job opportunities and skilled workers.</p>
+      <button class="cta-button">Explore Jobs</button>
+    </div>
+  </section>
+
+  <!-- About Us Section -->
+  <section class="about-us">
+    <h2>About Us</h2>
+    <p>
+      LabourWorkers connects employers with skilled workers across various industries. Whether you're looking for your next job or the perfect candidate, we’re here to help.
+    </p>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services">
+    <h2>Our Services</h2>
+    <div class="services-grid">
+      <div class="service-item">
+        <h3>Job Listings</h3>
+        <p>Find the latest job opportunities tailored to your skills and expertise.</p>
+      </div>
+      <div class="service-item">
+        <h3>Worker Profiles</h3>
+        <p>Access a diverse pool of skilled workers ready to meet your needs.</p>
+      </div>
+      <div class="service-item">
+        <h3>Application Tracking</h3>
+        <p>Seamlessly apply for jobs and track your applications in one place.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Jobs Section -->
+  <section class="featured-jobs">
+    <h2>Featured Jobs</h2>
+    <div class="jobs-grid">
+      <div class="job-card" *ngFor="let job of featuredJobs">
+        <h3>{{ job.title }}</h3>
+        <p>{{ job.description }}</p>
+        <button>Apply Now</button>
+      </div>
+    </div>
+  </section>
+</div>

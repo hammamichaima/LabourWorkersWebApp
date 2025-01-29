@@ -1,0 +1,29 @@
+.navbar {
+  display: flex;
+  justify-content: flex-end; /* Aligns the navigation bar to the right */
+  background-color: #f8f9fa; /* Light background color */
+  padding: 1rem; /* Adds some padding for spacing */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for style */
+}
+
+.nav-links {
+  list-style-type: none; /* Removes bullet points */
+  display: flex; /* Aligns items horizontally */
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  margin: 0 1rem; /* Adds spacing between links */
+}
+
+.nav-links a {
+  text-decoration: none; /* Removes underline */
+  color: #333; /* Link color */
+  font-weight: bold;
+  transition: color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.nav-links a:hover {
+  color: #007bff; /* Changes color on hover */
+}

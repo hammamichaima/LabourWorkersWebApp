@@ -1,0 +1,18 @@
+package com.example;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+
+@SpringBootApplication(
+		scanBasePackages = {
+				"com.example.LabourWorkers", // Include LabourWorkers package
+				"com.example.auth"           // Include auth package
+		},
+		exclude = {SecurityAutoConfiguration.class}
+)
+public class LabourWorkersApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(LabourWorkersApplication.class, args);
+	}
+}
