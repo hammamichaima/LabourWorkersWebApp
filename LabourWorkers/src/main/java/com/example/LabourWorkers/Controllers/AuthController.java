@@ -55,6 +55,7 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),  // ✅ Use email instead of username
@@ -70,12 +71,14 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new UserInfoResponse(
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),  // ✅ Return email
-                roles,
-                jwt));
+    //    return ResponseEntity.ok(new UserInfoResponse(
+      //          userDetails.getId(),
+        //        userDetails.getUsername(),
+          //      userDetails.getEmail(),  // ✅ Return email
+          //      roles,
+           //     jwt));
+        return ResponseEntity.ok(new MessageResponse("Login successful"));
+
     }
 
     @PostMapping(value = "/signup", produces = "application/json")
