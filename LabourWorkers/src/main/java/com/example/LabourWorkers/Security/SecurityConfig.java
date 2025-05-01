@@ -2,18 +2,18 @@ package com.example.LabourWorkers.Security;
 
 import com.example.LabourWorkers.Security.jwt.AuthEntryPointJwt;
 import com.example.LabourWorkers.Security.jwt.AuthTokenFilter;
-import com.example.LabourWorkers.Security.services.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,6 +23,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 
 import java.util.List;
 
@@ -69,53 +72,41 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-               .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // Inject CORS Config
-                .csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors()  // CORS en configuration globale
+                .and()
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeHttpRequests(auth -> auth
-                       .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/test/**").permitAll()
-                      .requestMatchers(h2ConsolePath + "/**").permitAll()  // Allow H2 console
-                       .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()  // Autorise l'accès aux API publiques (login, signup, etc.)
+                        .requestMatchers("/api/test/all").permitAll()
+                        .requestMatchers("/api/test/**").authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
-               .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-       // Fix for H2 Database Console - Allow Frames
-        http.headers(headers -> headers.frameOptions(frameOption -> frameOption.sameOrigin()));
+        // Permet d'afficher le H2 console dans le navigateur
+        http.headers().frameOptions().sameOrigin();
 
         return http.build();
-   }
-
-  //  @Bean
-   // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-      //  http.csrf(AbstractHttpConfigurer::disable)
-           //     .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-         //       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-         //       .authorizeHttpRequests(auth -> auth
-         //               .requestMatchers("/api/auth/**").permitAll()  // ✅ Ensure login & signup are allowed
-       //                 .requestMatchers("/api/test/**").permitAll()
-         //               .anyRequest().authenticated()
-       //         );
-
-     //   http.authenticationProvider(authenticationProvider());
-      //  http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-    //    return http.build();
-  //  }
+    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200")); // ✅ Allow frontend domain
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(List.of("Origin", "Content-Type", "Accept", "Authorization"));
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
+
 
 }

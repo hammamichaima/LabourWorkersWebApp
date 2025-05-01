@@ -53,34 +53,75 @@ public class AuthController {
         this.jwtUtils = jwtUtils;
     }
 
+
+
+    //@CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),  // ✅ Use email instead of username
+                        loginRequest.getEmail(),
                         loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        String jwt = jwtUtils.generateTokenFromEmail(userDetails.getEmail());  // ✅ Match email-based token generation
+        String jwt = jwtUtils.generateTokenFromEmail(userDetails.getEmail());
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-    //    return ResponseEntity.ok(new UserInfoResponse(
-      //          userDetails.getId(),
+        //    return ResponseEntity.ok(new UserInfoResponse(
+        //          userDetails.getId(),
         //        userDetails.getUsername(),
-          //      userDetails.getEmail(),  // ✅ Return email
-          //      roles,
-           //     jwt));
-        return ResponseEntity.ok(new MessageResponse("Login successful"));
+        //      userDetails.getEmail(),
+        //      roles,
+        //     jwt));
+        return ResponseEntity.ok(
+                new UserInfoResponse(
+                        userDetails.getId(),
+                        userDetails.getUsername(),
+                        userDetails.getEmail(),
+                        roles,
+                        jwt
+                )
+        );
 
     }
 
+    /*
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        String jwt = jwtUtils.generateTokenFromEmail(userDetails.getEmail());
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new UserInfoResponse(
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles,
+                jwt
+        ));
+    }
+*/
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/signup", produces = "application/json")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -131,7 +172,7 @@ public class AuthController {
     }
 
 
-
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();

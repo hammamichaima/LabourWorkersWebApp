@@ -17,18 +17,27 @@ public class StartupRunner implements CommandLineRunner {
         this.roleRepository = roleRepository;
     }
 
-    @Override
-    public void run(String... args) {
-        insertRoleIfNotExists(ERole.ROLE_USER);
-        insertRoleIfNotExists(ERole.ROLE_ADMIN);
-        insertRoleIfNotExists(ERole.ROLE_MODERATOR);
-    }
+    //  @Override
+    // public void run(String... args) {
+    //    insertRoleIfNotExists(ERole.ROLE_USER);
+    //    insertRoleIfNotExists(ERole.ROLE_ADMIN);
+    //   insertRoleIfNotExists(ERole.ROLE_MODERATOR);
+    // }
 
-    private void insertRoleIfNotExists(ERole roleName) {
-        Optional<Role> role = roleRepository.findByName(roleName);
-        if (role.isEmpty()) {
-            roleRepository.save(new Role(roleName));
-            System.out.println("✅ Role " + roleName + " inserted!");
+    @Override
+    public void run(String... args) throws Exception {
+        if (roleRepository.count() == 0) {
+            roleRepository.save(new Role(ERole.ROLE_USER));
+            roleRepository.save(new Role(ERole.ROLE_MODERATOR));
+            roleRepository.save(new Role(ERole.ROLE_ADMIN));
         }
+
+        //  private void insertRoleIfNotExists(ERole roleName) {
+        //     Optional<Role> role = roleRepository.findByName(roleName);
+        //    if (role.isEmpty()) {
+        //       roleRepository.save(new Role(roleName));
+        //      System.out.println("✅ Role " + roleName + " inserted!");
+        //    }
+
     }
 }

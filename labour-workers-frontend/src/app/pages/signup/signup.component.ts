@@ -29,7 +29,11 @@ export class SignupComponent {
     this.authService.signup(this.username, this.email, this.password).subscribe({
       next: (response) => {
         console.log('Signup successful:', response);
+        this.successMessage = 'Signup successful! Redirecting to login...';
+        setTimeout(() => this.router.navigate(['/login']), 1500); // 1.5 secondes
       },
+
+
       error: (err) => {
         console.error('Signup error details:', err);
         if (err.status === 0) {

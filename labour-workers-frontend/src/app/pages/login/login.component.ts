@@ -3,6 +3,9 @@ import { AuthService } from '../../services/auth.service'; // Import the AuthSer
 import { Router } from '@angular/router'; // Import Router to navigate after login
 import { NgForm } from '@angular/forms'; // Import for form handling
 
+
+
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -12,6 +15,8 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  successMessage: string = '';
+
 
   constructor(private authService: AuthService, private router: Router) {
   }
@@ -20,8 +25,13 @@ export class LoginComponent {
   login() {
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
+        localStorage.setItem('user', JSON.stringify(response));
+        const userId = response.id;
         console.log('Login successful:', response);
         // Handle successful login (e.g., redirect to dashboard)
+        this.successMessage = 'Login successful! Redirecting to Profile...';
+        //setTimeout(() => this.router.navigate(['/profile']), 1500);
+        setTimeout(() => this.router.navigate([`/profile/${userId}`]), 1500);
       },
       error: (err) => {
         console.error('Login error:', err);
